@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as GeographyRouteImport } from './routes/geography'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as VehiclesRouteImport } from './routes/vehicles'
 import { Route as WarehousesRouteImport } from './routes/warehouses'
 import { Route as CustomersIndexRouteImport } from './routes/customers.index'
@@ -34,6 +35,11 @@ const EmployeesRoute = EmployeesRouteImport.update({
 const GeographyRoute = GeographyRouteImport.update({
   id: '/geography',
   path: '/geography',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VehiclesRoute = VehiclesRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/employees': typeof EmployeesRoute
   '/geography': typeof GeographyRoute
+  '/settings': typeof SettingsRoute
   '/vehicles': typeof VehiclesRoute
   '/warehouses': typeof WarehousesRoute
   '/customers/$id': typeof CustomersIdRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/employees': typeof EmployeesRoute
   '/geography': typeof GeographyRoute
+  '/settings': typeof SettingsRoute
   '/vehicles': typeof VehiclesRoute
   '/warehouses': typeof WarehousesRoute
   '/customers/$id': typeof CustomersIdRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/employees': typeof EmployeesRoute
   '/geography': typeof GeographyRoute
+  '/settings': typeof SettingsRoute
   '/vehicles': typeof VehiclesRoute
   '/warehouses': typeof WarehousesRoute
   '/customers/$id': typeof CustomersIdRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/employees'
     | '/geography'
+    | '/settings'
     | '/vehicles'
     | '/warehouses'
     | '/customers/$id'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/employees'
     | '/geography'
+    | '/settings'
     | '/vehicles'
     | '/warehouses'
     | '/customers/$id'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/employees'
     | '/geography'
+    | '/settings'
     | '/vehicles'
     | '/warehouses'
     | '/customers/$id'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EmployeesRoute: typeof EmployeesRoute
   GeographyRoute: typeof GeographyRoute
+  SettingsRoute: typeof SettingsRoute
   VehiclesRoute: typeof VehiclesRoute
   WarehousesRoute: typeof WarehousesRoute
   CustomersIdRoute: typeof CustomersIdRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/geography'
       fullPath: '/geography'
       preLoaderRoute: typeof GeographyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vehicles': {
@@ -259,6 +279,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EmployeesRoute: EmployeesRoute,
   GeographyRoute: GeographyRoute,
+  SettingsRoute: SettingsRoute,
   VehiclesRoute: VehiclesRoute,
   WarehousesRoute: WarehousesRoute,
   CustomersIdRoute: CustomersIdRoute,
