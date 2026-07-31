@@ -66,7 +66,7 @@ function SupplierDetail() {
               label: "Approved commodities",
               value: (
                 <span className="flex flex-wrap gap-1.5">
-                  {s.commodities.map((c) => (
+                  {s.commodities.map((c: string) => (
                     <Badge key={c} variant="secondary">
                       {c}
                     </Badge>
