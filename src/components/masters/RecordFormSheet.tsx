@@ -94,6 +94,7 @@ export function RecordFormSheet({
 
   const allSteps = useMemo(() => [...steps, { title: "Preview", description: "Review before submitting", fields: [] }], [steps]);
   const isPreview = step === allSteps.length - 1;
+  const currentStep = allSteps[step] ?? allSteps[0]!;
 
   const setValue = (name: string, v: string) => {
     setValues((s) => ({ ...s, [name]: v }));
@@ -103,7 +104,7 @@ export function RecordFormSheet({
 
   const validateStep = () => {
     const next: Record<string, string> = {};
-    for (const f of allSteps[step].fields) {
+    for (const f of currentStep.fields) {
       const v = (values[f.name] ?? "").trim();
       if (f.required && !v) next[f.name] = `${f.label} is required`;
       else if (f.type === "email" && v && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v))
@@ -148,7 +149,7 @@ export function RecordFormSheet({
                   {mode === "create" ? `New ${entity}` : `Edit ${entity}`}
                 </SheetTitle>
                 <SheetDescription className="truncate">
-                  {allSteps[step].description}
+                  {currentStep.description}
                 </SheetDescription>
               </div>
               <span className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
@@ -186,7 +187,7 @@ export function RecordFormSheet({
           <div className="flex-1 overflow-y-auto scroll-slim px-6 py-5">
             {!isPreview ? (
               <div className="grid gap-4 sm:grid-cols-2">
-                {allSteps[step].fields.map((f) => (
+                {currentStep.fields.map((f) => (
                   <div
                     key={f.name}
                     className={cn("space-y-1.5", f.colSpan === 2 && "sm:col-span-2")}
@@ -247,7 +248,7 @@ export function RecordFormSheet({
                   </div>
                 ))}
 
-                {allSteps[step].title === "Documents" && (
+                {currentStep.title === "Documents" && (
                   <div className="sm:col-span-2">
                     <div className="grid place-items-center rounded-xl border border-dashed border-primary/30 bg-primary-soft/50 px-6 py-10 text-center">
                       <CloudUpload className="h-8 w-8 text-primary" />
