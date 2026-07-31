@@ -17,12 +17,12 @@ export const Route = createFileRoute("/vehicles")({
       {
         name: "description",
         content:
-          "Fleet and transport partner master with capacity, insurance, permits and driver assignment.",
+          "Fleet and transport partner master with capacity, insurance, fitness validity and driver assignment.",
       },
       { property: "og:title", content: "Vehicle & Carrier Master — Meridia ERP" },
       {
         property: "og:description",
-        content: "Own fleet and contracted carriers with compliance and service level data.",
+        content: "Own fleet and contracted carriers with compliance and service capability data.",
       },
     ],
   }),
@@ -34,40 +34,43 @@ const vehicleSteps: FormStep[] = [
     title: "Basic Information",
     description: "Registration and vehicle classification",
     fields: [
-      { name: "code", label: "Vehicle Code", required: true, placeholder: "VEH-1010" },
-      { name: "registration", label: "Registration Number", required: true },
+      { name: "code", label: "Vehicle Code", required: true, placeholder: "VEH-5007" },
+      { name: "vehicleNumber", label: "Vehicle Number", required: true },
       {
         name: "type",
         label: "Vehicle Type",
         type: "select",
         required: true,
-        options: ["Truck", "Trailer", "Van", "Reefer", "Container"],
+        options: [
+          "40ft Container Truck",
+          "Refrigerated Van",
+          "Flatbed Trailer",
+          "Box Truck",
+          "Hazmat Tanker",
+          "Curtain Side Trailer",
+        ],
       },
-      { name: "make", label: "Make" },
-      { name: "model", label: "Model" },
-      { name: "year", label: "Year", type: "number" },
+      { name: "capacity", label: "Capacity" },
       { name: "status", label: "Status", type: "switch" },
     ],
   },
   {
     title: "Contact",
-    description: "Capacity, driver and ownership",
+    description: "Load capability, driver and carrier",
     fields: [
-      { name: "capacityWeight", label: "Capacity (tonnes)", type: "number" },
-      { name: "capacityVolume", label: "Capacity (m³)", type: "number" },
-      { name: "fuelType", label: "Fuel Type", type: "select", options: ["Diesel", "Electric", "CNG", "Hybrid"] },
-      { name: "ownership", label: "Ownership", type: "select", options: ["Owned", "Leased", "Contracted"] },
+      { name: "weight", label: "Max Weight" },
+      { name: "volume", label: "Load Volume" },
       { name: "driver", label: "Assigned Driver" },
-      { name: "gpsDevice", label: "GPS Device ID" },
+      { name: "carrier", label: "Carrier" },
+      { name: "gps", label: "GPS Tracking", type: "select", options: ["Enabled", "Disabled"] },
     ],
   },
   {
     title: "Documents",
-    description: "Insurance, permits and maintenance",
+    description: "Insurance and fitness certificates",
     fields: [
       { name: "insuranceExpiry", label: "Insurance Expiry", type: "date" },
-      { name: "permitExpiry", label: "Permit Expiry", type: "date" },
-      { name: "lastService", label: "Last Service Date", type: "date" },
+      { name: "fitnessExpiry", label: "Fitness Expiry", type: "date" },
     ],
   },
 ];
@@ -75,24 +78,23 @@ const vehicleSteps: FormStep[] = [
 const carrierSteps: FormStep[] = [
   {
     title: "Basic Information",
-    description: "Carrier identification and mode",
+    description: "Carrier identification",
     fields: [
       { name: "code", label: "Carrier Code", required: true },
       { name: "name", label: "Carrier Name", required: true },
-      { name: "mode", label: "Mode", type: "select", options: ["Road", "Rail", "Air", "Sea"] },
-      { name: "scacCode", label: "SCAC Code" },
+      { name: "licenseNumber", label: "License Number" },
       { name: "status", label: "Status", type: "switch" },
     ],
   },
   {
     title: "Contact",
-    description: "Service coverage and commercial terms",
+    description: "Coordination contact and capabilities",
     fields: [
-      { name: "contact", label: "Contact Person" },
+      { name: "contactPerson", label: "Contact Person" },
       { name: "phone", label: "Phone", type: "tel" },
-      { name: "serviceArea", label: "Service Area", colSpan: 2 },
-      { name: "rateCard", label: "Rate Card" },
-      { name: "onTimeRate", label: "On-time %", type: "number" },
+      { name: "email", label: "Email", type: "email" },
+      { name: "refrigerated", label: "Refrigerated Capability", type: "switch" },
+      { name: "hazardTransport", label: "Hazmat Certified", type: "switch" },
     ],
   },
   {
@@ -114,10 +116,10 @@ function VehicleMaster() {
       render: (r) => <span className="num text-xs font-semibold text-primary">{r.code}</span>,
     },
     {
-      key: "registration",
-      header: "Registration",
-      value: (r) => r.registration,
-      render: (r) => <span className="num font-medium">{r.registration}</span>,
+      key: "vehicleNumber",
+      header: "Vehicle number",
+      value: (r) => r.vehicleNumber,
+      render: (r) => <span className="num font-medium">{r.vehicleNumber}</span>,
     },
     {
       key: "type",
@@ -125,35 +127,32 @@ function VehicleMaster() {
       value: (r) => r.type,
       render: (r) => <Badge variant="secondary">{r.type}</Badge>,
     },
-    { key: "make", header: "Make & model", value: (r) => `${r.make} ${r.model}` },
-    { key: "year", header: "Year", value: (r) => r.year, hiddenByDefault: true },
-    {
-      key: "capacity",
-      header: "Capacity",
-      value: (r) => r.capacityWeight,
-      render: (r) => (
-        <span className="num text-xs">
-          {r.capacityWeight} t · {r.capacityVolume} m³
-        </span>
-      ),
-    },
-    { key: "fuel", header: "Fuel", value: (r) => r.fuelType, hiddenByDefault: true },
-    { key: "ownership", header: "Ownership", value: (r) => r.ownership },
+    { key: "capacity", header: "Capacity", value: (r) => r.capacity },
+    { key: "weight", header: "Max weight", value: (r) => r.weight, hiddenByDefault: true },
+    { key: "volume", header: "Volume", value: (r) => r.volume, hiddenByDefault: true },
     { key: "driver", header: "Driver", value: (r) => r.driver },
+    { key: "carrier", header: "Carrier", value: (r) => r.carrier },
     {
-      key: "insurance",
+      key: "insuranceExpiry",
       header: "Insurance expiry",
       value: (r) => r.insuranceExpiry,
       render: (r) => <span className="num text-xs">{r.insuranceExpiry}</span>,
     },
     {
-      key: "permit",
-      header: "Permit expiry",
-      value: (r) => r.permitExpiry,
-      render: (r) => <span className="num text-xs">{r.permitExpiry}</span>,
+      key: "fitnessExpiry",
+      header: "Fitness expiry",
+      value: (r) => r.fitnessExpiry,
+      render: (r) => <span className="num text-xs">{r.fitnessExpiry}</span>,
       hiddenByDefault: true,
     },
-    { key: "gps", header: "GPS device", value: (r) => r.gpsDevice, hiddenByDefault: true },
+    {
+      key: "gps",
+      header: "GPS",
+      value: (r) => r.gps,
+      render: (r) => (
+        <Badge variant={r.gps === "Enabled" ? "secondary" : "outline"}>{r.gps}</Badge>
+      ),
+    },
     {
       key: "status",
       header: "Status",
@@ -170,16 +169,16 @@ function VehicleMaster() {
       match: (r, v) => r.type === v,
     },
     {
-      key: "ownership",
-      label: "Ownership",
-      options: ["Owned", "Leased", "Contracted"],
-      match: (r, v) => r.ownership === v,
+      key: "carrier",
+      label: "Carrier",
+      options: [...new Set(vehicles.map((v) => v.carrier))],
+      match: (r, v) => r.carrier === v,
     },
     {
-      key: "status",
-      label: "Status",
-      options: ["Active", "Inactive", "Under Maintenance"],
-      match: (r, v) => r.status === v,
+      key: "gps",
+      label: "GPS",
+      options: ["Enabled", "Disabled"],
+      match: (r, v) => r.gps === v,
     },
   ];
 
@@ -190,23 +189,34 @@ function VehicleMaster() {
       value: (r) => r.code,
       render: (r) => <span className="num text-xs font-semibold text-primary">{r.code}</span>,
     },
-    { key: "name", header: "Carrier", value: (r) => r.name, render: (r) => <span className="font-medium">{r.name}</span> },
     {
-      key: "mode",
-      header: "Mode",
-      value: (r) => r.mode,
-      render: (r) => <Badge variant="secondary">{r.mode}</Badge>,
+      key: "name",
+      header: "Carrier",
+      value: (r) => r.name,
+      render: (r) => <span className="font-medium">{r.name}</span>,
     },
-    { key: "serviceArea", header: "Service area", value: (r) => r.serviceArea },
-    { key: "contact", header: "Contact", value: (r) => r.contact },
-    { key: "phone", header: "Phone", value: (r) => r.phone, hiddenByDefault: true },
-    { key: "scac", header: "SCAC", value: (r) => r.scacCode, hiddenByDefault: true },
-    { key: "rate", header: "Rate card", value: (r) => r.rateCard },
+    { key: "contactPerson", header: "Contact person", value: (r) => r.contactPerson },
+    { key: "phone", header: "Phone", value: (r) => r.phone },
+    { key: "email", header: "Email", value: (r) => r.email, hiddenByDefault: true },
     {
-      key: "onTime",
-      header: "On-time %",
-      value: (r) => r.onTimeRate,
-      render: (r) => <span className="num font-medium">{r.onTimeRate}%</span>,
+      key: "licenseNumber",
+      header: "License",
+      value: (r) => r.licenseNumber,
+      render: (r) => <span className="num text-xs">{r.licenseNumber}</span>,
+    },
+    {
+      key: "capability",
+      header: "Capabilities",
+      value: (r) => `${r.refrigerated}-${r.hazardTransport}`,
+      render: (r) => (
+        <div className="flex flex-wrap gap-1">
+          {r.refrigerated && <Badge variant="secondary">Reefer</Badge>}
+          {r.hazardTransport && <Badge variant="secondary">Hazmat</Badge>}
+          {!r.refrigerated && !r.hazardTransport && (
+            <span className="text-xs text-muted-foreground">Standard</span>
+          )}
+        </div>
+      ),
     },
     {
       key: "status",
@@ -216,13 +226,27 @@ function VehicleMaster() {
     },
   ];
 
+  const carrierFilters: TableFilter<Carrier>[] = [
+    {
+      key: "capability",
+      label: "Capability",
+      options: ["Refrigerated", "Hazmat", "Standard"],
+      match: (r, v) =>
+        v === "Refrigerated"
+          ? r.refrigerated
+          : v === "Hazmat"
+            ? r.hazardTransport
+            : !r.refrigerated && !r.hazardTransport,
+    },
+  ];
+
   return (
     <div className="min-h-full">
       <PageHeader
         crumbs={[{ label: "Master Data Management", to: "/" }, { label: "Vehicle & Carrier" }]}
         icon={<Truck className="h-5 w-5" />}
         title="Vehicle & Carrier Master"
-        description="Own fleet, contracted carriers, compliance windows and transport service levels."
+        description="Own fleet, contracted carriers, compliance windows and transport capabilities."
       />
       <div className="p-4 sm:p-6">
         <Tabs defaultValue="vehicles">
@@ -239,8 +263,10 @@ function VehicleMaster() {
               entity="Vehicles"
               createLabel="Add Vehicle"
               getId={(r) => r.id}
-              getLabel={(r) => r.registration}
-              searchText={(r) => `${r.code} ${r.registration} ${r.make} ${r.model} ${r.driver}`}
+              getLabel={(r) => r.vehicleNumber}
+              searchText={(r) =>
+                `${r.code} ${r.vehicleNumber} ${r.type} ${r.driver} ${r.carrier}`
+              }
               onCreate={() => setVOpen(true)}
               onEdit={() => setVOpen(true)}
             />
@@ -250,19 +276,12 @@ function VehicleMaster() {
             <DataTable
               rows={carriers}
               columns={carrierColumns}
-              filters={[
-                {
-                  key: "mode",
-                  label: "Mode",
-                  options: ["Road", "Rail", "Air", "Sea"],
-                  match: (r, v) => r.mode === v,
-                },
-              ]}
+              filters={carrierFilters}
               entity="Carriers"
               createLabel="Add Carrier"
               getId={(r) => r.id}
               getLabel={(r) => r.name}
-              searchText={(r) => `${r.code} ${r.name} ${r.serviceArea} ${r.contact}`}
+              searchText={(r) => `${r.code} ${r.name} ${r.contactPerson} ${r.email}`}
               onCreate={() => setCOpen(true)}
               onEdit={() => setCOpen(true)}
             />
