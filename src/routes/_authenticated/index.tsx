@@ -55,29 +55,15 @@ export const Route = createFileRoute("/_authenticated/")({
   component: Dashboard,
 });
 
-const stats = [
-  { label: "Total Suppliers", value: "1,284", delta: "+3.2%", icon: Truck, to: "/suppliers" },
-  { label: "Total Customers", value: "902", delta: "+1.8%", icon: Users, to: "/customers" },
-  { label: "Total Items", value: "18,447", delta: "+6.4%", icon: Package, to: "/items" },
-  { label: "Warehouses", value: "24", delta: "+2", icon: WarehouseIcon, to: "/warehouses" },
-  { label: "Employees", value: "3,118", delta: "+0.9%", icon: IdCard, to: "/employees" },
-  { label: "Vehicles", value: "486", delta: "+12", icon: Boxes, to: "/vehicles" },
-  { label: "Countries", value: "42", delta: "+1", icon: Globe2, to: "/geography" },
+const statDefs = [
+  { label: "Total Suppliers", key: "suppliers", icon: Truck, to: "/suppliers" },
+  { label: "Total Customers", key: "customers", icon: Users, to: "/customers" },
+  { label: "Total Items", key: "items", icon: Package, to: "/items" },
+  { label: "Warehouses", key: "warehouses", icon: WarehouseIcon, to: "/warehouses" },
+  { label: "Employees", key: "employees", icon: IdCard, to: "/employees" },
+  { label: "Vehicles", key: "vehicles", icon: Boxes, to: "/vehicles" },
+  { label: "Countries", key: "countries", icon: Globe2, to: "/geography" },
 ] as const;
-
-const quickActions = [
-  { label: "Create Supplier", to: "/suppliers", icon: Truck },
-  { label: "Create Customer", to: "/customers", icon: Users },
-  { label: "Create Item", to: "/items", icon: Package },
-  { label: "Create Warehouse", to: "/warehouses", icon: WarehouseIcon },
-] as const;
-
-const chartColors = [
-  "var(--color-chart-1)",
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
-];
 
 function Dashboard() {
   return (
