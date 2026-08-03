@@ -91,6 +91,9 @@ type Props<T> = {
   onCreate?: () => void;
   createLabel?: string;
   entity: string;
+  isLoading?: boolean;
+  onRefresh?: () => void | Promise<unknown>;
+  onDelete?: (ids: string[]) => void | Promise<unknown>;
 };
 
 const PAGE_SIZES = [10, 25, 50];
@@ -107,6 +110,9 @@ export function DataTable<T>({
   onCreate,
   createLabel = "Add New",
   entity,
+  isLoading = false,
+  onRefresh,
+  onDelete,
 }: Props<T>) {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -118,7 +124,8 @@ export function DataTable<T>({
     columns.filter((c) => c.hiddenByDefault).map((c) => c.key),
   );
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const loading = isLoading || refreshing;
   const [deleting, setDeleting] = useState<{ ids: string[]; label: string } | null>(null);
   const [removed, setRemoved] = useState<string[]>([]);
   const [inactive, setInactive] = useState<string[]>([]);
@@ -163,12 +170,14 @@ export function DataTable<T>({
     }
   };
 
-  const refresh = () => {
-    setLoading(true);
-    window.setTimeout(() => {
-      setLoading(false);
-      toast.success(`${entity} list refreshed`, { description: "Synchronised with ERP core." });
-    }, 800);
+  const refresh = async () => {
+    setRefreshing(true);
+    try {
+      await onRefresh?.();
+      toast.success(`${entity} list refreshed`, { description: "Synchronised with the database." });
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const exportCsv = (ids?: string[]) => {
@@ -178,17 +187,17 @@ export function DataTable<T>({
     });
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleting) return;
-    setRemoved((r) => [...r, ...deleting.ids]);
-    setSelected([]);
-    toast.success(
-      deleting.ids.length > 1
-        ? `${deleting.ids.length} records deleted`
-        : `${deleting.label} deleted`,
-      { description: "Record moved to the recycle bin for 30 days." },
-    );
+    const ids = deleting.ids;
     setDeleting(null);
+    setSelected([]);
+    if (onDelete) {
+      await onDelete(ids);
+      return;
+    }
+    setRemoved((r) => [...r, ...ids]);
+    toast.success(ids.length > 1 ? `${ids.length} records deleted` : `${deleting.label} deleted`);
   };
 
   const allOnPageSelected = paged.length > 0 && paged.every((r) => selected.includes(getId(r)));
@@ -291,7 +300,7 @@ export function DataTable<T>({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9" onClick={refresh}>
+                <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => void refresh()}>
                   <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
                 </Button>
               </TooltipTrigger>
@@ -574,7 +583,7 @@ export function DataTable<T>({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmDelete}
+              onClick={() => void confirmDelete()}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete record
