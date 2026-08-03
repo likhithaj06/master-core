@@ -1,6 +1,7 @@
 import { Bell, Command, HelpCircle, Search, Sun, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -38,6 +39,8 @@ const notifications = [
 ];
 
 export function TopBar() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

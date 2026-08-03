@@ -66,6 +66,21 @@ const statDefs = [
   { label: "Countries", key: "countries", icon: Globe2, to: "/geography" },
 ] as const;
 
+const chartColors = [
+  "var(--color-primary)",
+  "var(--color-chart-2, oklch(0.72 0.11 250))",
+  "var(--color-chart-3, oklch(0.78 0.09 220))",
+  "var(--color-chart-4, oklch(0.66 0.12 265))",
+];
+
+const quickActions = [
+  { label: "New Supplier", to: "/suppliers", icon: Truck },
+  { label: "New Customer", to: "/customers", icon: Users },
+  { label: "New Item", to: "/items", icon: Package },
+  { label: "New Warehouse", to: "/warehouses", icon: WarehouseIcon },
+  { label: "New Employee", to: "/employees", icon: IdCard },
+] as const;
+
 function Dashboard() {
   const { data: liveCounts } = useMasterCounts();
   const stats = statDefs.map((d) => ({ ...d, value: liveCounts?.[d.key] ?? 0 }));
