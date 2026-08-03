@@ -25,7 +25,7 @@ export function useMasterList(table: MasterTable) {
 export function useSaveRecord(table: MasterTable, entity: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { id?: string; values: Record<string, string> }) =>
+    mutationFn: async (input: { id?: string | undefined; values: Record<string, string> }) =>
       input.id ? updateRecord(table, input.id, input.values) : createRecord(table, input.values),
     onSuccess: (row, input) => {
       qc.invalidateQueries({ queryKey: ["master", table] });
