@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import {
+  attachDocumentsToRecord,
   counts,
   createRecord,
   deleteRecords,
@@ -66,3 +68,55 @@ export function useAudit(entity?: string, recordId?: string) {
 }
 
 export type { MasterRecord, MasterTable };
+
+/** Converts a database row into the string map the multi-step form works with. */
+export function toFormValues(record: Record<string, unknown> | null): Record<string, string> {
+  if (!record) return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(record)) {
+    if (v === null || v === undefined) continue;
+    if (k === "status") out[k] = v === "Active" ? "true" : "false";
+    else if (Array.isArray(v)) out[k] = v.join("; ");
+    else if (typeof v === "boolean") out[k] = String(v);
+    else out[k] = String(v);
+  }
+  return out;
+}
+
+/** Everything a master list page needs: live rows, create/edit sheet state, save + delete. */
+export function useMasterPage<T>(table: MasterTable, entity: string) {
+  const { data, isLoading, refetch } = useMasterList(table);
+  const save = useSaveRecord(table, entity);
+  const del = useDeleteRecords(table, entity);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<MasterRecord | null>(null);
+
+  const rows = (data ?? []) as unknown as T[];
+
+  return {
+    rows,
+    isLoading,
+    refetch: () => refetch(),
+    open,
+    setOpen,
+    mode: (editing ? "edit" : "create") as "edit" | "create",
+    initial: toFormValues(editing),
+    recordId: editing?.id ?? null,
+    startCreate: () => {
+      setEditing(null);
+      setOpen(true);
+    },
+    startEdit: (row: T) => {
+      setEditing(row as unknown as MasterRecord);
+      setOpen(true);
+    },
+    remove: (ids: string[]) => del.mutateAsync(ids),
+    submit: async (values: Record<string, string>, documentIds: string[]) => {
+      const row = await save.mutateAsync({ id: editing?.id, values });
+      if (documentIds.length) {
+        await attachDocumentsToRecord(documentIds, row.id, String(row.code));
+      }
+      setEditing(null);
+    },
+  };
+}
