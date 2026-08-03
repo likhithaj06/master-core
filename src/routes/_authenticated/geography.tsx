@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Globe2 } from "lucide-react";
-import { useState } from "react";
 
 import { DataTable, type Column, type TableFilter } from "@/components/masters/DataTable";
 import { PageHeader } from "@/components/masters/PageHeader";
