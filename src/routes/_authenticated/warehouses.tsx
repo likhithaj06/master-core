@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { warehouseTree, warehouses, type Warehouse } from "@/data/masters";
 
-export const Route = createFileRoute("/warehouses")({
+export const Route = createFileRoute("/_authenticated/warehouses")({
   head: () => ({
     meta: [
       { title: "Warehouse, Rack, Shelf & Bin Master — Meridia ERP" },

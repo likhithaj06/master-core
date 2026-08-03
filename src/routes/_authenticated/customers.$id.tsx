@@ -4,7 +4,7 @@ import { Users } from "lucide-react";
 import { DetailLayout } from "@/components/masters/DetailLayout";
 import { customers } from "@/data/masters";
 
-export const Route = createFileRoute("/customers/$id")({
+export const Route = createFileRoute("/_authenticated/customers/$id")({
   loader: ({ params }) => {
     const customer = customers.find((c) => c.id === params.id);
     if (!customer) throw notFound();

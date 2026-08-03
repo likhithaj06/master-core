@@ -5,7 +5,7 @@ import { DetailLayout } from "@/components/masters/DetailLayout";
 import { Badge } from "@/components/ui/badge";
 import { suppliers } from "@/data/masters";
 
-export const Route = createFileRoute("/suppliers/$id")({
+export const Route = createFileRoute("/_authenticated/suppliers/$id")({
   loader: ({ params }) => {
     const supplier = suppliers.find((s) => s.id === params.id);
     if (!supplier) throw notFound();

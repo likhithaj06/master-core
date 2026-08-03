@@ -9,7 +9,7 @@ import { StatusChip } from "@/components/masters/StatusChip";
 import { Badge } from "@/components/ui/badge";
 import { items, type Item } from "@/data/masters";
 
-export const Route = createFileRoute("/items/")({
+export const Route = createFileRoute("/_authenticated/items/")({
   head: () => ({
     meta: [
       { title: "Item Master — Meridia ERP MDM" },

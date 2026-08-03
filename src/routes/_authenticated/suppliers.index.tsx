@@ -8,7 +8,7 @@ import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormS
 import { StatusChip } from "@/components/masters/StatusChip";
 import { suppliers, type Supplier } from "@/data/masters";
 
-export const Route = createFileRoute("/suppliers/")({
+export const Route = createFileRoute("/_authenticated/suppliers/")({
   head: () => ({
     meta: [
       { title: "Supplier Master — Meridia ERP MDM" },

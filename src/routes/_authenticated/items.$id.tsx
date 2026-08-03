@@ -4,7 +4,7 @@ import { Package } from "lucide-react";
 import { DetailLayout } from "@/components/masters/DetailLayout";
 import { items } from "@/data/masters";
 
-export const Route = createFileRoute("/items/$id")({
+export const Route = createFileRoute("/_authenticated/items/$id")({
   loader: ({ params }) => {
     const item = items.find((i) => i.id === params.id);
     if (!item) throw notFound();

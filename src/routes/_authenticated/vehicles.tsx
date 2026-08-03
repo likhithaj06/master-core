@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { vehicles, carriers, type Vehicle, type Carrier } from "@/data/masters";
 
-export const Route = createFileRoute("/vehicles")({
+export const Route = createFileRoute("/_authenticated/vehicles")({
   head: () => ({
     meta: [
       { title: "Vehicle & Carrier Master — Meridia ERP" },

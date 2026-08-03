@@ -9,7 +9,7 @@ import { StatusChip } from "@/components/masters/StatusChip";
 import { Badge } from "@/components/ui/badge";
 import { countries, type Country } from "@/data/masters";
 
-export const Route = createFileRoute("/geography")({
+export const Route = createFileRoute("/_authenticated/geography")({
   head: () => ({
     meta: [
       { title: "Country & Currency Master — Meridia ERP" },

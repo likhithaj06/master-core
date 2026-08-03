@@ -36,7 +36,7 @@ import {
   warehouses,
 } from "@/data/masters";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "MDM Dashboard — Meridia ERP Master Data" },
