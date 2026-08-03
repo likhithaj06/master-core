@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useMasterCounts } from "@/hooks/useMasters";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/masters/PageHeader";
 import {
@@ -66,6 +67,9 @@ const statDefs = [
 ] as const;
 
 function Dashboard() {
+  const { data: liveCounts } = useMasterCounts();
+  const stats = statDefs.map((d) => ({ ...d, value: liveCounts?.[d.key] ?? 0 }));
+
   return (
     <div className="min-h-full">
       <PageHeader
@@ -101,9 +105,9 @@ function Dashboard() {
                 </div>
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
-              <p className="num mt-3 text-2xl font-semibold">{s.value}</p>
+              <p className="num mt-3 text-2xl font-semibold">{s.value.toLocaleString()}</p>
               <p className="mt-0.5 truncate text-xs text-muted-foreground">{s.label}</p>
-              <p className="mt-2 text-[11px] font-medium text-success">{s.delta} this quarter</p>
+              <p className="mt-2 text-[11px] font-medium text-success">Live from database</p>
             </Link>
           ))}
         </section>
