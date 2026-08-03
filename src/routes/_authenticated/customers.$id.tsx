@@ -1,40 +1,35 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useMasterList } from "@/hooks/useMasters";
 import { Users } from "lucide-react";
 
 import { DetailLayout } from "@/components/masters/DetailLayout";
-import { customers } from "@/data/masters";
+import { type Customer } from "@/data/masters";
 
 export const Route = createFileRoute("/_authenticated/customers/$id")({
-  loader: ({ params }) => {
-    const customer = customers.find((c) => c.id === params.id);
-    if (!customer) throw notFound();
-    return { customer };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Customer not found" }, { name: "robots", content: "noindex" }] };
-    }
-    const title = `${loaderData.customer.name} — Customer Master`;
-    return {
-      meta: [
-        { title },
-        {
-          name: "description",
-          content: `Customer master record for ${loaderData.customer.name} (${loaderData.customer.country}).`,
-        },
-        { property: "og:title", content: title },
-        {
-          property: "og:description",
-          content: "Customer golden record with logistics preferences and commercial terms.",
-        },
-      ],
-    };
-  },
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Customer record — Meridia ERP" },
+      { name: "description", content: "Customer master record detail with full golden-record attributes." },
+      { property: "og:title", content: "Customer record — Meridia ERP" },
+      { property: "og:description", content: "Customer master data detail view." },
+    ],
+  }),
   component: CustomerDetail,
 });
 
 function CustomerDetail() {
-  const { customer: c } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const { data, isLoading } = useMasterList("customers");
+  const c = ((data ?? []) as unknown as Customer[]).find((r) => r.id === id);
+
+  if (!c) {
+    return (
+      <div className="p-10 text-sm text-muted-foreground">
+        {isLoading ? "Loading record…" : "Record not found."}
+      </div>
+    );
+  }
 
   return (
     <DetailLayout
