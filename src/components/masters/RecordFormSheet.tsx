@@ -1,12 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Check,
-  CloudUpload,
-  Loader2,
-  Paperclip,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Check, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -38,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { DocumentUploader } from "@/components/masters/DocumentUploader";
 import { cn } from "@/lib/utils";
 
 export type FormField = {
@@ -59,6 +53,9 @@ export function RecordFormSheet({
   steps,
   initial,
   mode = "create",
+  onSubmit,
+  documentEntity,
+  recordId,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -66,6 +63,9 @@ export function RecordFormSheet({
   steps: FormStep[];
   initial?: Record<string, string>;
   mode?: "create" | "edit";
+  onSubmit?: (values: Record<string, string>, documentIds: string[]) => Promise<unknown>;
+  documentEntity?: string;
+  recordId?: string | null;
 }) {
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Record<string, string>>(initial ?? {});
@@ -73,6 +73,8 @@ export function RecordFormSheet({
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState<"idle" | "saving" | "saved">("idle");
   const [confirmClose, setConfirmClose] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [documentIds, setDocumentIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (open) {
@@ -81,6 +83,8 @@ export function RecordFormSheet({
       setErrors({});
       setDirty(false);
       setSaving("idle");
+      setSubmitting(false);
+      setDocumentIds([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -125,13 +129,32 @@ export function RecordFormSheet({
     else onOpenChange(false);
   };
 
-  const submit = () => {
-    toast.success(
-      mode === "create" ? `${entity} created successfully` : `${entity} updated successfully`,
-      { description: "Record published to the master data governance queue." },
-    );
-    setDirty(false);
-    onOpenChange(false);
+  const submit = async () => {
+    for (const s of steps) {
+      const missing = s.fields.filter((f) => f.required && !(values[f.name] ?? "").trim());
+      if (missing.length) {
+        toast.error("Please complete the required fields", {
+          description: missing.map((f) => f.label).join(", "),
+        });
+        return;
+      }
+    }
+    if (!onSubmit) {
+      toast.success(mode === "create" ? `${entity} created` : `${entity} updated`);
+      setDirty(false);
+      onOpenChange(false);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await onSubmit(values, documentIds);
+      setDirty(false);
+      onOpenChange(false);
+    } catch {
+      // errors surface as toasts from the mutation layer
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -248,18 +271,14 @@ export function RecordFormSheet({
                   </div>
                 ))}
 
-                {currentStep.title === "Documents" && (
+                {currentStep.title === "Documents" && documentEntity && (
                   <div className="sm:col-span-2">
-                    <div className="grid place-items-center rounded-xl border border-dashed border-primary/30 bg-primary-soft/50 px-6 py-10 text-center">
-                      <CloudUpload className="h-8 w-8 text-primary" />
-                      <p className="mt-3 text-sm font-medium">Drop files or browse</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        PDF, DOCX, XLSX or images up to 25 MB each
-                      </p>
-                      <Button variant="outline" size="sm" className="mt-4">
-                        <Paperclip className="h-4 w-4" /> Attach documents
-                      </Button>
-                    </div>
+                    <DocumentUploader
+                      entity={documentEntity}
+                      recordId={recordId ?? null}
+                      recordCode={values["code"] ?? null}
+                      onUploaded={(d) => setDocumentIds((ids) => [...ids, d.id])}
+                    />
                   </div>
                 )}
               </div>
@@ -301,8 +320,17 @@ export function RecordFormSheet({
                   Continue <ChevronRight className="h-4 w-4" />
                 </Button>
               ) : (
-                <Button onClick={submit} className="shadow-[var(--shadow-primary)]">
-                  <Check className="h-4 w-4" /> {mode === "create" ? "Create" : "Save changes"}
+                <Button
+                  onClick={() => void submit()}
+                  disabled={submitting}
+                  className="shadow-[var(--shadow-primary)]"
+                >
+                  {submitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}{" "}
+                  {mode === "create" ? "Create" : "Save changes"}
                 </Button>
               )}
             </div>
