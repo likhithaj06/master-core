@@ -6,8 +6,9 @@ import { DataTable, type Column, type TableFilter } from "@/components/masters/D
 import { PageHeader } from "@/components/masters/PageHeader";
 import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormSheet";
 import { StatusChip } from "@/components/masters/StatusChip";
+import { useMasterPage } from "@/hooks/useMasters";
 import { Badge } from "@/components/ui/badge";
-import { countries, type Country } from "@/data/masters";
+import { type Country } from "@/data/masters";
 
 export const Route = createFileRoute("/_authenticated/geography")({
   head: () => ({
@@ -60,7 +61,7 @@ const steps: FormStep[] = [
 ];
 
 function GeographyMaster() {
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Country>("countries", "Country");
 
   const columns: Column<Country>[] = [
     {
@@ -114,7 +115,7 @@ function GeographyMaster() {
     {
       key: "currency",
       label: "Currency",
-      options: [...new Set(countries.map((c) => c.currency))],
+      options: [...new Set(m.rows.map((c) => c.currency))],
       match: (r, v) => r.currency === v,
     },
     {
@@ -135,19 +136,32 @@ function GeographyMaster() {
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={countries}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Countries"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Country"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.currency} ${r.language} ${r.timeZone}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Country" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Country"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="countries"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }
