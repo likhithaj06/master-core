@@ -1,8 +1,10 @@
 import { Bell, Command, HelpCircle, Search, Sun, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,8 @@ const notifications = [
 ];
 
 export function TopBar() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -143,7 +147,17 @@ export function TopBar() {
               </DropdownMenuItem>
               <DropdownMenuItem>Audit log</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">Sign out</DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={async () => {
+                  await queryClient.cancelQueries();
+                  queryClient.clear();
+                  await supabase.auth.signOut();
+                  navigate({ to: "/auth", replace: true });
+                }}
+              >
+                Sign out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

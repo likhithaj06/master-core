@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Truck } from "lucide-react";
-import { useState } from "react";
 
 import { DataTable, type Column, type TableFilter } from "@/components/masters/DataTable";
 import { PageHeader } from "@/components/masters/PageHeader";
 import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormSheet";
 import { StatusChip } from "@/components/masters/StatusChip";
+import { useMasterPage } from "@/hooks/useMasters";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { vehicles, carriers, type Vehicle, type Carrier } from "@/data/masters";
+import { type Vehicle, type Carrier } from "@/data/masters";
 
-export const Route = createFileRoute("/vehicles")({
+export const Route = createFileRoute("/_authenticated/vehicles")({
   head: () => ({
     meta: [
       { title: "Vehicle & Carrier Master — Meridia ERP" },
@@ -105,8 +105,8 @@ const carrierSteps: FormStep[] = [
 ];
 
 function VehicleMaster() {
-  const [vOpen, setVOpen] = useState(false);
-  const [cOpen, setCOpen] = useState(false);
+  const v = useMasterPage<Vehicle>("vehicles", "Vehicle");
+  const c = useMasterPage<Carrier>("carriers", "Carrier");
 
   const vehicleColumns: Column<Vehicle>[] = [
     {
@@ -165,13 +165,13 @@ function VehicleMaster() {
     {
       key: "type",
       label: "Type",
-      options: [...new Set(vehicles.map((v) => v.type))],
+      options: [...new Set(v.rows.map((v) => v.type))],
       match: (r, v) => r.type === v,
     },
     {
       key: "carrier",
       label: "Carrier",
-      options: [...new Set(vehicles.map((v) => v.carrier))],
+      options: [...new Set(v.rows.map((v) => v.carrier))],
       match: (r, v) => r.carrier === v,
     },
     {
@@ -257,39 +257,65 @@ function VehicleMaster() {
 
           <TabsContent value="vehicles" className="mt-4">
             <DataTable
-              rows={vehicles}
+              rows={v.rows}
               columns={vehicleColumns}
               filters={vehicleFilters}
               entity="Vehicles"
+              isLoading={v.isLoading}
+              onRefresh={v.refetch}
+              onDelete={v.remove}
               createLabel="Add Vehicle"
               getId={(r) => r.id}
               getLabel={(r) => r.vehicleNumber}
               searchText={(r) =>
                 `${r.code} ${r.vehicleNumber} ${r.type} ${r.driver} ${r.carrier}`
               }
-              onCreate={() => setVOpen(true)}
-              onEdit={() => setVOpen(true)}
+              onCreate={v.startCreate}
+              onEdit={v.startEdit}
             />
           </TabsContent>
 
           <TabsContent value="carriers" className="mt-4">
             <DataTable
-              rows={carriers}
+              rows={c.rows}
               columns={carrierColumns}
               filters={carrierFilters}
               entity="Carriers"
+              isLoading={c.isLoading}
+              onRefresh={c.refetch}
+              onDelete={c.remove}
               createLabel="Add Carrier"
               getId={(r) => r.id}
               getLabel={(r) => r.name}
               searchText={(r) => `${r.code} ${r.name} ${r.contactPerson} ${r.email}`}
-              onCreate={() => setCOpen(true)}
-              onEdit={() => setCOpen(true)}
+              onCreate={c.startCreate}
+              onEdit={c.startEdit}
             />
           </TabsContent>
         </Tabs>
       </div>
-      <RecordFormSheet open={vOpen} onOpenChange={setVOpen} entity="Vehicle" steps={vehicleSteps} />
-      <RecordFormSheet open={cOpen} onOpenChange={setCOpen} entity="Carrier" steps={carrierSteps} />
+      <RecordFormSheet
+        open={v.open}
+        onOpenChange={v.setOpen}
+        entity="Vehicle"
+        steps={vehicleSteps}
+        mode={v.mode}
+        initial={v.initial}
+        recordId={v.recordId}
+        documentEntity="vehicles"
+        onSubmit={v.submit}
+      />
+      <RecordFormSheet
+        open={c.open}
+        onOpenChange={c.setOpen}
+        entity="Carrier"
+        steps={carrierSteps}
+        mode={c.mode}
+        initial={c.initial}
+        recordId={c.recordId}
+        documentEntity="carriers"
+        onSubmit={c.submit}
+      />
     </div>
   );
 }

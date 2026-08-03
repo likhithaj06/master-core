@@ -6,14 +6,15 @@ import { DataTable, type Column, type TableFilter } from "@/components/masters/D
 import { PageHeader } from "@/components/masters/PageHeader";
 import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormSheet";
 import { StatusChip } from "@/components/masters/StatusChip";
+import { useMasterPage } from "@/hooks/useMasters";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { warehouseTree, warehouses, type Warehouse } from "@/data/masters";
+import { warehouseTree, type Warehouse } from "@/data/masters";
 
-export const Route = createFileRoute("/warehouses")({
+export const Route = createFileRoute("/_authenticated/warehouses")({
   head: () => ({
     meta: [
       { title: "Warehouse, Rack, Shelf & Bin Master — Meridia ERP" },
@@ -69,7 +70,7 @@ function occupancyTone(v: number) {
 }
 
 function WarehouseMaster() {
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Warehouse>("warehouses", "Warehouse");
   const [expanded, setExpanded] = useState<string[]>([warehouseTree[0]?.code ?? ""]);
 
   const toggle = (code: string) =>
@@ -136,16 +137,19 @@ function WarehouseMaster() {
 
           <TabsContent value="list" className="mt-4">
             <DataTable
-              rows={warehouses}
+              rows={m.rows}
               columns={columns}
               filters={filters}
               entity="Warehouses"
+              isLoading={m.isLoading}
+              onRefresh={m.refetch}
+              onDelete={m.remove}
               createLabel="Add Warehouse"
               getId={(r) => r.id}
               getLabel={(r) => r.name}
               searchText={(r) => `${r.code} ${r.name} ${r.location} ${r.manager}`}
-              onCreate={() => setOpen(true)}
-              onEdit={() => setOpen(true)}
+              onCreate={m.startCreate}
+              onEdit={m.startEdit}
             />
           </TabsContent>
 
@@ -284,7 +288,17 @@ function WarehouseMaster() {
           </TabsContent>
         </Tabs>
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Warehouse" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Warehouse"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="warehouses"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

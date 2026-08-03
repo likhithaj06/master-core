@@ -9,136 +9,156 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as EmployeesRouteImport } from './routes/employees'
-import { Route as GeographyRouteImport } from './routes/geography'
-import { Route as HelpRouteImport } from './routes/help'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as VehiclesRouteImport } from './routes/vehicles'
-import { Route as WarehousesRouteImport } from './routes/warehouses'
-import { Route as CustomersIndexRouteImport } from './routes/customers.index'
-import { Route as CustomersIdRouteImport } from './routes/customers.$id'
-import { Route as ItemsIndexRouteImport } from './routes/items.index'
-import { Route as ItemsIdRouteImport } from './routes/items.$id'
-import { Route as SuppliersIndexRouteImport } from './routes/suppliers.index'
-import { Route as SuppliersIdRouteImport } from './routes/suppliers.$id'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedEmployeesRouteImport } from './routes/_authenticated/employees'
+import { Route as AuthenticatedGeographyRouteImport } from './routes/_authenticated/geography'
+import { Route as AuthenticatedHelpRouteImport } from './routes/_authenticated/help'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedVehiclesRouteImport } from './routes/_authenticated/vehicles'
+import { Route as AuthenticatedWarehousesRouteImport } from './routes/_authenticated/warehouses'
+import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers.index'
+import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
+import { Route as AuthenticatedItemsIndexRouteImport } from './routes/_authenticated/items.index'
+import { Route as AuthenticatedItemsIdRouteImport } from './routes/_authenticated/items.$id'
+import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers.index'
+import { Route as AuthenticatedSuppliersIdRouteImport } from './routes/_authenticated/suppliers.$id'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const EmployeesRoute = EmployeesRouteImport.update({
+const AuthenticatedEmployeesRoute = AuthenticatedEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const GeographyRoute = GeographyRouteImport.update({
+const AuthenticatedGeographyRoute = AuthenticatedGeographyRouteImport.update({
   id: '/geography',
   path: '/geography',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const HelpRoute = HelpRouteImport.update({
+const AuthenticatedHelpRoute = AuthenticatedHelpRouteImport.update({
   id: '/help',
   path: '/help',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const VehiclesRoute = VehiclesRouteImport.update({
+const AuthenticatedVehiclesRoute = AuthenticatedVehiclesRouteImport.update({
   id: '/vehicles',
   path: '/vehicles',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const WarehousesRoute = WarehousesRouteImport.update({
+const AuthenticatedWarehousesRoute = AuthenticatedWarehousesRouteImport.update({
   id: '/warehouses',
   path: '/warehouses',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CustomersIndexRoute = CustomersIndexRouteImport.update({
-  id: '/customers/',
-  path: '/customers/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CustomersIdRoute = CustomersIdRouteImport.update({
-  id: '/customers/$id',
-  path: '/customers/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ItemsIndexRoute = ItemsIndexRouteImport.update({
+const AuthenticatedCustomersIndexRoute =
+  AuthenticatedCustomersIndexRouteImport.update({
+    id: '/customers/',
+    path: '/customers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCustomersIdRoute =
+  AuthenticatedCustomersIdRouteImport.update({
+    id: '/customers/$id',
+    path: '/customers/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedItemsIndexRoute = AuthenticatedItemsIndexRouteImport.update({
   id: '/items/',
   path: '/items/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ItemsIdRoute = ItemsIdRouteImport.update({
+const AuthenticatedItemsIdRoute = AuthenticatedItemsIdRouteImport.update({
   id: '/items/$id',
   path: '/items/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const SuppliersIndexRoute = SuppliersIndexRouteImport.update({
-  id: '/suppliers/',
-  path: '/suppliers/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SuppliersIdRoute = SuppliersIdRouteImport.update({
-  id: '/suppliers/$id',
-  path: '/suppliers/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedSuppliersIndexRoute =
+  AuthenticatedSuppliersIndexRouteImport.update({
+    id: '/suppliers/',
+    path: '/suppliers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSuppliersIdRoute =
+  AuthenticatedSuppliersIdRouteImport.update({
+    id: '/suppliers/$id',
+    path: '/suppliers/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/employees': typeof EmployeesRoute
-  '/geography': typeof GeographyRoute
-  '/help': typeof HelpRoute
-  '/settings': typeof SettingsRoute
-  '/vehicles': typeof VehiclesRoute
-  '/warehouses': typeof WarehousesRoute
-  '/customers/$id': typeof CustomersIdRoute
-  '/items/$id': typeof ItemsIdRoute
-  '/suppliers/$id': typeof SuppliersIdRoute
-  '/customers/': typeof CustomersIndexRoute
-  '/items/': typeof ItemsIndexRoute
-  '/suppliers/': typeof SuppliersIndexRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/employees': typeof AuthenticatedEmployeesRoute
+  '/geography': typeof AuthenticatedGeographyRoute
+  '/help': typeof AuthenticatedHelpRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/vehicles': typeof AuthenticatedVehiclesRoute
+  '/warehouses': typeof AuthenticatedWarehousesRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/items/$id': typeof AuthenticatedItemsIdRoute
+  '/suppliers/$id': typeof AuthenticatedSuppliersIdRoute
+  '/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/items/': typeof AuthenticatedItemsIndexRoute
+  '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/employees': typeof EmployeesRoute
-  '/geography': typeof GeographyRoute
-  '/help': typeof HelpRoute
-  '/settings': typeof SettingsRoute
-  '/vehicles': typeof VehiclesRoute
-  '/warehouses': typeof WarehousesRoute
-  '/customers/$id': typeof CustomersIdRoute
-  '/items/$id': typeof ItemsIdRoute
-  '/suppliers/$id': typeof SuppliersIdRoute
-  '/customers': typeof CustomersIndexRoute
-  '/items': typeof ItemsIndexRoute
-  '/suppliers': typeof SuppliersIndexRoute
+  '/auth': typeof AuthRoute
+  '/employees': typeof AuthenticatedEmployeesRoute
+  '/geography': typeof AuthenticatedGeographyRoute
+  '/help': typeof AuthenticatedHelpRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/vehicles': typeof AuthenticatedVehiclesRoute
+  '/warehouses': typeof AuthenticatedWarehousesRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/items/$id': typeof AuthenticatedItemsIdRoute
+  '/suppliers/$id': typeof AuthenticatedSuppliersIdRoute
+  '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/items': typeof AuthenticatedItemsIndexRoute
+  '/suppliers': typeof AuthenticatedSuppliersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/employees': typeof EmployeesRoute
-  '/geography': typeof GeographyRoute
-  '/help': typeof HelpRoute
-  '/settings': typeof SettingsRoute
-  '/vehicles': typeof VehiclesRoute
-  '/warehouses': typeof WarehousesRoute
-  '/customers/$id': typeof CustomersIdRoute
-  '/items/$id': typeof ItemsIdRoute
-  '/suppliers/$id': typeof SuppliersIdRoute
-  '/customers/': typeof CustomersIndexRoute
-  '/items/': typeof ItemsIndexRoute
-  '/suppliers/': typeof SuppliersIndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/employees': typeof AuthenticatedEmployeesRoute
+  '/_authenticated/geography': typeof AuthenticatedGeographyRoute
+  '/_authenticated/help': typeof AuthenticatedHelpRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/vehicles': typeof AuthenticatedVehiclesRoute
+  '/_authenticated/warehouses': typeof AuthenticatedWarehousesRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/_authenticated/items/$id': typeof AuthenticatedItemsIdRoute
+  '/_authenticated/suppliers/$id': typeof AuthenticatedSuppliersIdRoute
+  '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/_authenticated/items/': typeof AuthenticatedItemsIndexRoute
+  '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/employees'
     | '/geography'
     | '/help'
@@ -153,13 +173,14 @@ export interface FileRouteTypes {
     | '/suppliers/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/auth'
     | '/employees'
     | '/geography'
     | '/help'
     | '/settings'
     | '/vehicles'
     | '/warehouses'
+    | '/'
     | '/customers/$id'
     | '/items/$id'
     | '/suppliers/$id'
@@ -168,147 +189,176 @@ export interface FileRouteTypes {
     | '/suppliers'
   id:
     | '__root__'
-    | '/'
-    | '/employees'
-    | '/geography'
-    | '/help'
-    | '/settings'
-    | '/vehicles'
-    | '/warehouses'
-    | '/customers/$id'
-    | '/items/$id'
-    | '/suppliers/$id'
-    | '/customers/'
-    | '/items/'
-    | '/suppliers/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/employees'
+    | '/_authenticated/geography'
+    | '/_authenticated/help'
+    | '/_authenticated/settings'
+    | '/_authenticated/vehicles'
+    | '/_authenticated/warehouses'
+    | '/_authenticated/'
+    | '/_authenticated/customers/$id'
+    | '/_authenticated/items/$id'
+    | '/_authenticated/suppliers/$id'
+    | '/_authenticated/customers/'
+    | '/_authenticated/items/'
+    | '/_authenticated/suppliers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  EmployeesRoute: typeof EmployeesRoute
-  GeographyRoute: typeof GeographyRoute
-  HelpRoute: typeof HelpRoute
-  SettingsRoute: typeof SettingsRoute
-  VehiclesRoute: typeof VehiclesRoute
-  WarehousesRoute: typeof WarehousesRoute
-  CustomersIdRoute: typeof CustomersIdRoute
-  ItemsIdRoute: typeof ItemsIdRoute
-  SuppliersIdRoute: typeof SuppliersIdRoute
-  CustomersIndexRoute: typeof CustomersIndexRoute
-  ItemsIndexRoute: typeof ItemsIndexRoute
-  SuppliersIndexRoute: typeof SuppliersIndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/employees': {
-      id: '/employees'
+    '/_authenticated/employees': {
+      id: '/_authenticated/employees'
       path: '/employees'
       fullPath: '/employees'
-      preLoaderRoute: typeof EmployeesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEmployeesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/geography': {
-      id: '/geography'
+    '/_authenticated/geography': {
+      id: '/_authenticated/geography'
       path: '/geography'
       fullPath: '/geography'
-      preLoaderRoute: typeof GeographyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedGeographyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/help': {
-      id: '/help'
+    '/_authenticated/help': {
+      id: '/_authenticated/help'
       path: '/help'
       fullPath: '/help'
-      preLoaderRoute: typeof HelpRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedHelpRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/settings': {
-      id: '/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/vehicles': {
-      id: '/vehicles'
+    '/_authenticated/vehicles': {
+      id: '/_authenticated/vehicles'
       path: '/vehicles'
       fullPath: '/vehicles'
-      preLoaderRoute: typeof VehiclesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedVehiclesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/warehouses': {
-      id: '/warehouses'
+    '/_authenticated/warehouses': {
+      id: '/_authenticated/warehouses'
       path: '/warehouses'
       fullPath: '/warehouses'
-      preLoaderRoute: typeof WarehousesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedWarehousesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/customers/': {
-      id: '/customers/'
+    '/_authenticated/customers/': {
+      id: '/_authenticated/customers/'
       path: '/customers'
       fullPath: '/customers/'
-      preLoaderRoute: typeof CustomersIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCustomersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/customers/$id': {
-      id: '/customers/$id'
+    '/_authenticated/customers/$id': {
+      id: '/_authenticated/customers/$id'
       path: '/customers/$id'
       fullPath: '/customers/$id'
-      preLoaderRoute: typeof CustomersIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCustomersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/items/': {
-      id: '/items/'
+    '/_authenticated/items/': {
+      id: '/_authenticated/items/'
       path: '/items'
       fullPath: '/items/'
-      preLoaderRoute: typeof ItemsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedItemsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/items/$id': {
-      id: '/items/$id'
+    '/_authenticated/items/$id': {
+      id: '/_authenticated/items/$id'
       path: '/items/$id'
       fullPath: '/items/$id'
-      preLoaderRoute: typeof ItemsIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedItemsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/suppliers/': {
-      id: '/suppliers/'
+    '/_authenticated/suppliers/': {
+      id: '/_authenticated/suppliers/'
       path: '/suppliers'
       fullPath: '/suppliers/'
-      preLoaderRoute: typeof SuppliersIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSuppliersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/suppliers/$id': {
-      id: '/suppliers/$id'
+    '/_authenticated/suppliers/$id': {
+      id: '/_authenticated/suppliers/$id'
       path: '/suppliers/$id'
       fullPath: '/suppliers/$id'
-      preLoaderRoute: typeof SuppliersIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSuppliersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedEmployeesRoute: typeof AuthenticatedEmployeesRoute
+  AuthenticatedGeographyRoute: typeof AuthenticatedGeographyRoute
+  AuthenticatedHelpRoute: typeof AuthenticatedHelpRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedVehiclesRoute: typeof AuthenticatedVehiclesRoute
+  AuthenticatedWarehousesRoute: typeof AuthenticatedWarehousesRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
+  AuthenticatedItemsIdRoute: typeof AuthenticatedItemsIdRoute
+  AuthenticatedSuppliersIdRoute: typeof AuthenticatedSuppliersIdRoute
+  AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
+  AuthenticatedItemsIndexRoute: typeof AuthenticatedItemsIndexRoute
+  AuthenticatedSuppliersIndexRoute: typeof AuthenticatedSuppliersIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedEmployeesRoute: AuthenticatedEmployeesRoute,
+  AuthenticatedGeographyRoute: AuthenticatedGeographyRoute,
+  AuthenticatedHelpRoute: AuthenticatedHelpRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedVehiclesRoute: AuthenticatedVehiclesRoute,
+  AuthenticatedWarehousesRoute: AuthenticatedWarehousesRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
+  AuthenticatedItemsIdRoute: AuthenticatedItemsIdRoute,
+  AuthenticatedSuppliersIdRoute: AuthenticatedSuppliersIdRoute,
+  AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
+  AuthenticatedItemsIndexRoute: AuthenticatedItemsIndexRoute,
+  AuthenticatedSuppliersIndexRoute: AuthenticatedSuppliersIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  EmployeesRoute: EmployeesRoute,
-  GeographyRoute: GeographyRoute,
-  HelpRoute: HelpRoute,
-  SettingsRoute: SettingsRoute,
-  VehiclesRoute: VehiclesRoute,
-  WarehousesRoute: WarehousesRoute,
-  CustomersIdRoute: CustomersIdRoute,
-  ItemsIdRoute: ItemsIdRoute,
-  SuppliersIdRoute: SuppliersIdRoute,
-  CustomersIndexRoute: CustomersIndexRoute,
-  ItemsIndexRoute: ItemsIndexRoute,
-  SuppliersIndexRoute: SuppliersIndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

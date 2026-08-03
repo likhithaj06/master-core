@@ -1,41 +1,36 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useMasterList } from "@/hooks/useMasters";
 import { Truck } from "lucide-react";
 
 import { DetailLayout } from "@/components/masters/DetailLayout";
 import { Badge } from "@/components/ui/badge";
-import { suppliers } from "@/data/masters";
+import { type Supplier } from "@/data/masters";
 
-export const Route = createFileRoute("/suppliers/$id")({
-  loader: ({ params }) => {
-    const supplier = suppliers.find((s) => s.id === params.id);
-    if (!supplier) throw notFound();
-    return { supplier };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Supplier not found" }, { name: "robots", content: "noindex" }] };
-    }
-    const title = `${loaderData.supplier.name} — Supplier Master`;
-    return {
-      meta: [
-        { title },
-        {
-          name: "description",
-          content: `Master data record for ${loaderData.supplier.name}, ${loaderData.supplier.city}, ${loaderData.supplier.country}.`,
-        },
-        { property: "og:title", content: title },
-        {
-          property: "og:description",
-          content: `Supplier golden record with certification, commercial and banking details.`,
-        },
-      ],
-    };
-  },
+export const Route = createFileRoute("/_authenticated/suppliers/$id")({
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Supplier record — Meridia ERP" },
+      { name: "description", content: "Supplier master record detail with full golden-record attributes." },
+      { property: "og:title", content: "Supplier record — Meridia ERP" },
+      { property: "og:description", content: "Supplier master data detail view." },
+    ],
+  }),
   component: SupplierDetail,
 });
 
 function SupplierDetail() {
-  const { supplier: s } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const { data, isLoading } = useMasterList("suppliers");
+  const s = ((data ?? []) as unknown as Supplier[]).find((r) => r.id === id);
+
+  if (!s) {
+    return (
+      <div className="p-10 text-sm text-muted-foreground">
+        {isLoading ? "Loading record…" : "Record not found."}
+      </div>
+    );
+  }
 
   return (
     <DetailLayout

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/help")({
+export const Route = createFileRoute("/_authenticated/help")({
   head: () => ({
     meta: [
       { title: "Help & Documentation — Meridia ERP MDM" },

@@ -1,15 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Package } from "lucide-react";
-import { useState } from "react";
 
 import { DataTable, type Column, type TableFilter } from "@/components/masters/DataTable";
 import { PageHeader } from "@/components/masters/PageHeader";
 import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormSheet";
 import { StatusChip } from "@/components/masters/StatusChip";
+import { useMasterPage } from "@/hooks/useMasters";
 import { Badge } from "@/components/ui/badge";
-import { items, type Item } from "@/data/masters";
+import { type Item } from "@/data/masters";
 
-export const Route = createFileRoute("/items/")({
+export const Route = createFileRoute("/_authenticated/items/")({
   head: () => ({
     meta: [
       { title: "Item Master — Meridia ERP MDM" },
@@ -79,7 +79,7 @@ const steps: FormStep[] = [
 
 function ItemMaster() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Item>("items", "Item");
 
   const columns: Column<Item>[] = [
     {
@@ -158,7 +158,7 @@ function ItemMaster() {
     {
       key: "unit",
       label: "Unit",
-      options: [...new Set(items.map((i) => i.unit))],
+      options: [...new Set(m.rows.map((i) => i.unit))],
       match: (r, v) => r.unit === v,
     },
   ];
@@ -173,20 +173,33 @@ function ItemMaster() {
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={items}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Items"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Item"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.sku} ${r.barcode} ${r.category} ${r.brand}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
           onView={(r) => navigate({ to: "/items/$id", params: { id: r.id } })}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Item" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Item"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="items"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

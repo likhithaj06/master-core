@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useMasterCounts } from "@/hooks/useMasters";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/masters/PageHeader";
 import {
@@ -36,7 +37,7 @@ import {
   warehouses,
 } from "@/data/masters";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "MDM Dashboard — Meridia ERP Master Data" },
@@ -55,31 +56,35 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-const stats = [
-  { label: "Total Suppliers", value: "1,284", delta: "+3.2%", icon: Truck, to: "/suppliers" },
-  { label: "Total Customers", value: "902", delta: "+1.8%", icon: Users, to: "/customers" },
-  { label: "Total Items", value: "18,447", delta: "+6.4%", icon: Package, to: "/items" },
-  { label: "Warehouses", value: "24", delta: "+2", icon: WarehouseIcon, to: "/warehouses" },
-  { label: "Employees", value: "3,118", delta: "+0.9%", icon: IdCard, to: "/employees" },
-  { label: "Vehicles", value: "486", delta: "+12", icon: Boxes, to: "/vehicles" },
-  { label: "Countries", value: "42", delta: "+1", icon: Globe2, to: "/geography" },
-] as const;
-
-const quickActions = [
-  { label: "Create Supplier", to: "/suppliers", icon: Truck },
-  { label: "Create Customer", to: "/customers", icon: Users },
-  { label: "Create Item", to: "/items", icon: Package },
-  { label: "Create Warehouse", to: "/warehouses", icon: WarehouseIcon },
+const statDefs = [
+  { label: "Total Suppliers", key: "suppliers", icon: Truck, to: "/suppliers" },
+  { label: "Total Customers", key: "customers", icon: Users, to: "/customers" },
+  { label: "Total Items", key: "items", icon: Package, to: "/items" },
+  { label: "Warehouses", key: "warehouses", icon: WarehouseIcon, to: "/warehouses" },
+  { label: "Employees", key: "employees", icon: IdCard, to: "/employees" },
+  { label: "Vehicles", key: "vehicles", icon: Boxes, to: "/vehicles" },
+  { label: "Countries", key: "countries", icon: Globe2, to: "/geography" },
 ] as const;
 
 const chartColors = [
-  "var(--color-chart-1)",
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
+  "var(--color-primary)",
+  "var(--color-chart-2, oklch(0.72 0.11 250))",
+  "var(--color-chart-3, oklch(0.78 0.09 220))",
+  "var(--color-chart-4, oklch(0.66 0.12 265))",
 ];
 
+const quickActions = [
+  { label: "New Supplier", to: "/suppliers", icon: Truck },
+  { label: "New Customer", to: "/customers", icon: Users },
+  { label: "New Item", to: "/items", icon: Package },
+  { label: "New Warehouse", to: "/warehouses", icon: WarehouseIcon },
+  { label: "New Employee", to: "/employees", icon: IdCard },
+] as const;
+
 function Dashboard() {
+  const { data: liveCounts } = useMasterCounts();
+  const stats = statDefs.map((d) => ({ ...d, value: liveCounts?.[d.key] ?? 0 }));
+
   return (
     <div className="min-h-full">
       <PageHeader
@@ -115,9 +120,9 @@ function Dashboard() {
                 </div>
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
-              <p className="num mt-3 text-2xl font-semibold">{s.value}</p>
+              <p className="num mt-3 text-2xl font-semibold">{s.value.toLocaleString()}</p>
               <p className="mt-0.5 truncate text-xs text-muted-foreground">{s.label}</p>
-              <p className="mt-2 text-[11px] font-medium text-success">{s.delta} this quarter</p>
+              <p className="mt-2 text-[11px] font-medium text-success">Live from database</p>
             </Link>
           ))}
         </section>

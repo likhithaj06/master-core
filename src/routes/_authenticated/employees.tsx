@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { IdCard } from "lucide-react";
-import { useState } from "react";
 
 import { DataTable, type Column, type TableFilter } from "@/components/masters/DataTable";
 import { PageHeader } from "@/components/masters/PageHeader";
 import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormSheet";
 import { StatusChip } from "@/components/masters/StatusChip";
+import { useMasterPage } from "@/hooks/useMasters";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { employees, type Employee } from "@/data/masters";
+import { type Employee } from "@/data/masters";
 
-export const Route = createFileRoute("/employees")({
+export const Route = createFileRoute("/_authenticated/employees")({
   head: () => ({
     meta: [
       { title: "Employee Master — Meridia ERP MDM" },
@@ -85,7 +85,7 @@ const initials = (name: string) =>
     .join("");
 
 function EmployeeMaster() {
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Employee>("employees", "Employee");
 
   const columns: Column<Employee>[] = [
     {
@@ -142,13 +142,13 @@ function EmployeeMaster() {
     {
       key: "department",
       label: "Department",
-      options: [...new Set(employees.map((e) => e.department))],
+      options: [...new Set(m.rows.map((e) => e.department))],
       match: (r, v) => r.department === v,
     },
     {
       key: "shift",
       label: "Shift",
-      options: [...new Set(employees.map((e) => e.shift))],
+      options: [...new Set(m.rows.map((e) => e.shift))],
       match: (r, v) => r.shift === v,
     },
     {
@@ -169,19 +169,32 @@ function EmployeeMaster() {
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={employees}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Employees"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Employee"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.department} ${r.designation} ${r.email}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Employee" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Employee"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="employees"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }

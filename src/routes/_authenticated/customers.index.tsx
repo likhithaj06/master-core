@@ -1,14 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Users } from "lucide-react";
-import { useState } from "react";
 
 import { DataTable, type Column, type TableFilter } from "@/components/masters/DataTable";
 import { PageHeader } from "@/components/masters/PageHeader";
 import { RecordFormSheet, type FormStep } from "@/components/masters/RecordFormSheet";
 import { StatusChip } from "@/components/masters/StatusChip";
-import { customers, type Customer } from "@/data/masters";
+import { useMasterPage } from "@/hooks/useMasters";
+import { type Customer } from "@/data/masters";
 
-export const Route = createFileRoute("/customers/")({
+export const Route = createFileRoute("/_authenticated/customers/")({
   head: () => ({
     meta: [
       { title: "Customer Master — Meridia ERP MDM" },
@@ -80,7 +80,7 @@ const steps: FormStep[] = [
 
 function CustomerMaster() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const m = useMasterPage<Customer>("customers", "Customer");
 
   const columns: Column<Customer>[] = [
     {
@@ -141,7 +141,7 @@ function CustomerMaster() {
     {
       key: "country",
       label: "Country",
-      options: [...new Set(customers.map((c) => c.country))],
+      options: [...new Set(m.rows.map((c) => c.country))],
       match: (r, v) => r.country === v,
     },
   ];
@@ -156,20 +156,33 @@ function CustomerMaster() {
       />
       <div className="p-4 sm:p-6">
         <DataTable
-          rows={customers}
+          rows={m.rows}
           columns={columns}
           filters={filters}
           entity="Customers"
+          isLoading={m.isLoading}
+          onRefresh={m.refetch}
+          onDelete={m.remove}
           createLabel="Add Customer"
           getId={(r) => r.id}
           getLabel={(r) => r.name}
           searchText={(r) => `${r.code} ${r.name} ${r.contactPerson} ${r.email} ${r.country}`}
-          onCreate={() => setOpen(true)}
-          onEdit={() => setOpen(true)}
+          onCreate={m.startCreate}
+          onEdit={m.startEdit}
           onView={(r) => navigate({ to: "/customers/$id", params: { id: r.id } })}
         />
       </div>
-      <RecordFormSheet open={open} onOpenChange={setOpen} entity="Customer" steps={steps} />
+      <RecordFormSheet
+        open={m.open}
+        onOpenChange={m.setOpen}
+        entity="Customer"
+        steps={steps}
+        mode={m.mode}
+        initial={m.initial}
+        recordId={m.recordId}
+        documentEntity="customers"
+        onSubmit={m.submit}
+      />
     </div>
   );
 }
