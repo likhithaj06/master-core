@@ -10,6 +10,7 @@ import {
   Settings,
   LifeBuoy,
   Boxes,
+  ShieldCheck,
 } from "lucide-react";
 
 import {
@@ -25,6 +26,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useDashboardInsights } from "@/hooks/useMasters";
 
 const masterItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -38,6 +40,7 @@ const masterItems = [
 ] as const;
 
 const systemItems = [
+  { title: "Data Quality Report", url: "/data-quality", icon: ShieldCheck },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Help", url: "/help", icon: LifeBuoy },
 ] as const;
@@ -46,6 +49,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const { data } = useDashboardInsights();
 
   const isActive = (url: string) =>
     url === "/" ? pathname === "/" : pathname.startsWith(url);
@@ -126,13 +130,13 @@ export function AppSidebar() {
 
       {!collapsed && (
         <SidebarFooter className="border-t border-sidebar-border p-3">
-          <div className="rounded-lg bg-primary-soft p-3">
+          <Link to="/data-quality" className="block rounded-lg bg-primary-soft p-3 transition-colors hover:bg-accent">
             <p className="text-xs font-semibold text-accent-foreground">Data quality score</p>
-            <p className="mt-1 text-2xl font-semibold num text-foreground">96.4%</p>
+            <p className="mt-1 text-2xl font-semibold num text-foreground">{data?.quality.score ?? 0}%</p>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              128 records pending enrichment
+              {data?.quality.incomplete ?? 0} records need attention
             </p>
-          </div>
+          </Link>
         </SidebarFooter>
       )}
     </Sidebar>
