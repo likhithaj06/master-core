@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedDataQualityRouteImport } from './routes/_authenticated/data-quality'
 import { Route as AuthenticatedEmployeesRouteImport } from './routes/_authenticated/employees'
 import { Route as AuthenticatedGeographyRouteImport } from './routes/_authenticated/geography'
 import { Route as AuthenticatedHelpRouteImport } from './routes/_authenticated/help'
@@ -39,6 +40,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDataQualityRoute =
+  AuthenticatedDataQualityRouteImport.update({
+    id: '/data-quality',
+    path: '/data-quality',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEmployeesRoute = AuthenticatedEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
@@ -107,6 +114,7 @@ const AuthenticatedSuppliersIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
+  '/data-quality': typeof AuthenticatedDataQualityRoute
   '/employees': typeof AuthenticatedEmployeesRoute
   '/geography': typeof AuthenticatedGeographyRoute
   '/help': typeof AuthenticatedHelpRoute
@@ -122,6 +130,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/data-quality': typeof AuthenticatedDataQualityRoute
   '/employees': typeof AuthenticatedEmployeesRoute
   '/geography': typeof AuthenticatedGeographyRoute
   '/help': typeof AuthenticatedHelpRoute
@@ -140,6 +149,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/data-quality': typeof AuthenticatedDataQualityRoute
   '/_authenticated/employees': typeof AuthenticatedEmployeesRoute
   '/_authenticated/geography': typeof AuthenticatedGeographyRoute
   '/_authenticated/help': typeof AuthenticatedHelpRoute
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/data-quality'
     | '/employees'
     | '/geography'
     | '/help'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/data-quality'
     | '/employees'
     | '/geography'
     | '/help'
@@ -191,6 +203,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/data-quality'
     | '/_authenticated/employees'
     | '/_authenticated/geography'
     | '/_authenticated/help'
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/data-quality': {
+      id: '/_authenticated/data-quality'
+      path: '/data-quality'
+      fullPath: '/data-quality'
+      preLoaderRoute: typeof AuthenticatedDataQualityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/employees': {
@@ -322,6 +342,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDataQualityRoute: typeof AuthenticatedDataQualityRoute
   AuthenticatedEmployeesRoute: typeof AuthenticatedEmployeesRoute
   AuthenticatedGeographyRoute: typeof AuthenticatedGeographyRoute
   AuthenticatedHelpRoute: typeof AuthenticatedHelpRoute
@@ -338,6 +359,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDataQualityRoute: AuthenticatedDataQualityRoute,
   AuthenticatedEmployeesRoute: AuthenticatedEmployeesRoute,
   AuthenticatedGeographyRoute: AuthenticatedGeographyRoute,
   AuthenticatedHelpRoute: AuthenticatedHelpRoute,

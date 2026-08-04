@@ -6,6 +6,7 @@ import {
   attachDocumentsToRecord,
   counts,
   createRecord,
+  dashboardInsights,
   deleteRecords,
   listAudit,
   listRecords,
@@ -30,6 +31,7 @@ export function useSaveRecord(table: MasterTable, entity: string) {
     onSuccess: (row, input) => {
       qc.invalidateQueries({ queryKey: ["master", table] });
       qc.invalidateQueries({ queryKey: ["master-counts"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-insights"] });
       qc.invalidateQueries({ queryKey: ["audit"] });
       toast.success(input.id ? `${entity} updated` : `${entity} created`, {
         description: `${String(row.code)} saved to the master data database.`,
@@ -46,6 +48,7 @@ export function useDeleteRecords(table: MasterTable, entity: string) {
     onSuccess: (_d, ids) => {
       qc.invalidateQueries({ queryKey: ["master", table] });
       qc.invalidateQueries({ queryKey: ["master-counts"] });
+      qc.invalidateQueries({ queryKey: ["dashboard-insights"] });
       qc.invalidateQueries({ queryKey: ["audit"] });
       toast.success(
         ids.length > 1 ? `${ids.length} ${entity} records deleted` : `${entity} record deleted`,
@@ -57,6 +60,14 @@ export function useDeleteRecords(table: MasterTable, entity: string) {
 
 export function useMasterCounts() {
   return useQuery({ queryKey: ["master-counts"], queryFn: counts, staleTime: 10_000 });
+}
+
+export function useDashboardInsights() {
+  return useQuery({
+    queryKey: ["dashboard-insights"],
+    queryFn: dashboardInsights,
+    staleTime: 10_000,
+  });
 }
 
 export function useAudit(entity?: string, recordId?: string) {
